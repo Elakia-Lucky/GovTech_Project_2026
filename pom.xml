@@ -6,13 +6,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
-    <artifactId>lunch-picker</artifactId>
+    <groupId>com</groupId>
+    <artifactId>govtech</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Lunch Picker Application</name>
-    <description>Spring Boot application to help teams pick lunch locations</description>
+    <name>Best Restaurant for Team Lunch</name>
+    
 
     <properties>
         <java.version>17</java.version>
