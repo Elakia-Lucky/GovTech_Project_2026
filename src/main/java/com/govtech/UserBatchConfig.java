@@ -23,7 +23,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableBatchProcessing
 public class UserBatchConfig {
 
-
     @Bean
     public FlatFileItemReader<User> userReader() {
         FlatFileItemReader<User> reader = new FlatFileItemReader<>();
@@ -41,9 +40,9 @@ public class UserBatchConfig {
 
 
     @Bean
-    public JpaItemWriter<User> userWriter(EntityManagerFactory emf) {
+    public JpaItemWriter<User> userWriter(EntityManagerFactory entityManagerFactory) {
         JpaItemWriter<User> writer = new JpaItemWriter<>();
-        writer.setEntityManagerFactory(emf);
+        writer.setEntityManagerFactory(entityManagerFactory);
         return writer;
     }
 
@@ -73,3 +72,4 @@ public class UserBatchConfig {
                 .build();
     }
 }
+
