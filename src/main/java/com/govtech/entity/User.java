@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class User {
 
     @Id
@@ -38,3 +38,4 @@ public class User {
         this.username = username;
     }
 }
+
