@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Best Restaurant For Team Lunch </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 8px;
+            width: 250px;
+        }
+        button {
+            cursor: pointer;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        p {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Restaurant</h1>
+
+    <!-- Session Creation -->
+    <div class="section" id="session-section">
+        <h2>Create Session</h2>
+        <input type="text" id="username" placeholder="Enter your username">
+        <br>
+        <button onclick="createSession()">Create Session</button>
+        <p id="session-id-display"></p>
+    </div>
+
+    <!-- Restaurant Submission -->
+    <div class="section" id="submit-section" style="display:none;">
+        <h2>Submit Restaurant</h2>
+        <input type="text" id="restaurant-name" placeholder="Restaurant name">
+        <br>
+        <input type="text" id="submitted-by" placeholder="Submitted by">
+        <br>
+        <button onclick="submitRestaurant()">Submit</button>
+        <p id="submit-message"></p>
+    </div>
+
+    <!-- Random Selection -->
+    <div class="section" id="random-section" style="display:none;">
+        <h2>Pick Restaurant</h2>
+        <button onclick="pickRandom()">Pick</button>
+        <p id="random-result"></p>
+    </div>
+
+    <script>
+        let sessionId = '';
+
+        // Create a new session
+        async function createSession() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert("Please enter a username.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/sessions?username=${encodeURIComponent(username)}`, {
+                    method: 'POST'
+                });
+                if (!response.ok) throw await response.text();
+
+                sessionId = await response.json();
+                document.getElementById('session-id-display').innerText = "Session ID: " + sessionId;
+                document.getElementById('submit-section').style.display = 'block';
+                document.getElementById('random-section').style.display = 'block';
+            } catch (error) {
+                alert("Error creating session: " + error);
+            }
+        }
+
+        // Submit a restaurant choice
+        async function submitRestaurant() {
+            const restaurant = document.getElementById('restaurant-name').value.trim();
+            const submittedBy = document.getElementById('submitted-by').value.trim();
+
+            if (!restaurant || !submittedBy) {
+                alert("Both restaurant name and submitted by are required.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}/bestrestaurants?restaurant=${encodeURIComponent(restaurant)}&submittedBy=${encodeURIComponent(submittedBy)}`, {
+                    method: 'POST'
+                });
+                if (!response.ok) throw await response.text();
+
+                document.getElementById('submit-message').innerText = `Submitted "${restaurant}" by ${submittedBy}`;
+                document.getElementById('restaurant-name').value = '';
+                document.getElementById('submitted-by').value = '';
+            } catch (error) {
+                alert("Error submitting restaurant: " + error);
+            }
+        }
+
+        async function pickRandom() {
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}/random`);
+                if (!response.ok) throw await response.text();
+
+                const restaurant = await response.text();
+                document.getElementById('random-result').innerText = "Selected Restaurant: " + restaurant;
+
+                // Disable further submissions
+                document.getElementById('submit-section').style.display = 'none';
+            } catch (error) {
+                alert("Error picking random restaurant: " + error);
+            }
+        }
+    </script>
+</body>
+</html>
